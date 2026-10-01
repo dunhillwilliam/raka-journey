@@ -1,0 +1,6 @@
+{
+  "name": "Raka Learning Journey",
+  "description": "Platform pemantauan dan evaluasi perkembangan belajar Raka, mencakup Daily Report sesi mentoring, analisis kompetensi, observasi orang tua, grafik progress, dan galeri karya.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
