@@ -12,7 +12,17 @@ import { useApp } from '../../context/AppContext';
 
 export const MonthlyReportView: React.FC = () => {
   const { monthlyReport, toggleMonthlyTarget, competencies, sessions, artworks, curiosityItems } = useApp();
-  const [selectedMonth, setSelectedMonth] = useState('September 2026');
+
+  const sessionMonths = Array.from(new Set(
+    sessions
+      .map(s => new Date(s.date).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }))
+      .filter(Boolean)
+  ));
+  const monthOptions = monthlyReport.month && !sessionMonths.includes(monthlyReport.month)
+    ? [monthlyReport.month, ...sessionMonths]
+    : sessionMonths;
+  const [selectedMonth, setSelectedMonth] = useState<string>(monthOptions[0] || '');
+  const activeMonth = selectedMonth || monthlyReport.month || '';
 
   if (sessions.length === 0) {
     return (
@@ -46,7 +56,7 @@ export const MonthlyReportView: React.FC = () => {
         <div>
           <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Monthly Report</h2>
           <p className="text-[11px] sm:text-xs text-slate-500">
-            Rangkuman capaian belajar Raka periode {selectedMonth}
+            Rangkuman capaian belajar Raka periode {activeMonth}
           </p>
         </div>
 
@@ -56,9 +66,10 @@ export const MonthlyReportView: React.FC = () => {
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="appearance-none pl-3 pr-8 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-800 hover:border-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-xs min-h-[38px]"
           >
-            <option value="September 2026">September 2026</option>
-            <option value="Agustus 2026">Agustus 2026</option>
-            <option value="Juli 2026">Juli 2026</option>
+            {monthOptions.length === 0 && <option value="">Pilih Bulan</option>}
+            {monthOptions.map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
           </select>
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-3 pointer-events-none" />
         </div>

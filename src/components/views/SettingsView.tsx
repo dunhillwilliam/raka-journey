@@ -207,7 +207,7 @@ export const SettingsView: React.FC = () => {
             <div>
               <h3 className="text-sm font-bold text-slate-900">Koneksi Supabase &amp; Cloudflare R2</h3>
               <p className="text-xs text-slate-500">
-                Data belajar tersimpan di Supabase PostgreSQL dan artefak file tersimpan di Cloudflare R2
+                Data belajar tersimpan di Supabase PostgreSQL dan artefak file tersimpan di Cloudflare R2 (via variabel lingkungan)
               </p>
             </div>
           </div>
@@ -218,7 +218,7 @@ export const SettingsView: React.FC = () => {
               cloudConfig.isSupabaseConnected ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
             }`}>
               <span className={`w-2 h-2 rounded-full ${cloudConfig.isSupabaseConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-              {cloudConfig.isSupabaseConnected ? 'Supabase Live' : 'Supabase Offline / Cache'}
+              {cloudConfig.isSupabaseConnected ? 'Supabase Live' : 'Supabase Offline'}
             </span>
 
             <button
@@ -245,7 +245,7 @@ export const SettingsView: React.FC = () => {
           {saveSuccess && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Konfigurasi Supabase &amp; Cloudflare R2 berhasil disimpan!</span>
+              <span>Koneksi Supabase &amp; Cloudflare R2 dikonfigurasi via variabel lingkungan (variabel VITE_*).</span>
             </div>
           )}
 
@@ -334,7 +334,7 @@ export const SettingsView: React.FC = () => {
                 type="submit"
                 className="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-semibold shadow-xs min-h-[38px] transition-colors"
               >
-                Simpan Konfigurasi Cloud
+                Terapkan &amp; Muat Ulang
               </button>
             ) : (
               <div className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-400 rounded-xl text-xs font-medium">
@@ -535,8 +535,8 @@ export const SettingsView: React.FC = () => {
             <RotateCcw className="w-4 h-4" />
           </div>
           <div>
-            <h4 className="text-xs sm:text-sm font-semibold text-slate-900">Bersihkan Cache &amp; Reset Data</h4>
-            <p className="text-[11px] text-slate-500">Bersihkan cache browser lokal dan sinkronkan ulang dari Supabase</p>
+            <h4 className="text-xs sm:text-sm font-semibold text-slate-900">Segarkan Data</h4>
+            <p className="text-[11px] text-slate-500">Muat ulang data dari Supabase dan Cloudflare</p>
           </div>
         </div>
 
@@ -544,14 +544,14 @@ export const SettingsView: React.FC = () => {
           <button
             type="button"
             onClick={() => {
-              if (confirm('Bersihkan cache dan sinkronkan ulang dari database Supabase?')) {
+              if (confirm('Muat ulang data dari database Supabase?')) {
                 resetToDefaultDemoData();
               }
             }}
             className="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs min-h-[38px] flex items-center justify-center gap-1.5 transition-colors self-start sm:self-auto"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Bersihkan Cache Lokal</span>
+            <span>Segarkan Data</span>
           </button>
         ) : (
           <div
@@ -559,7 +559,7 @@ export const SettingsView: React.FC = () => {
             title="Khusus Mentor"
           >
             <Lock className="w-3.5 h-3.5" />
-            <span>Reset Cache (Khusus Mentor)</span>
+            <span>Segarkan Data (Khusus Mentor)</span>
           </div>
         )}
       </div>

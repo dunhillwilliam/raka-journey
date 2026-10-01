@@ -7,47 +7,19 @@ export interface R2Config {
   workerProxyUrl?: string;
 }
 
-const STORAGE_KEYS = {
-  R2_ACCOUNT_ID: 'raka_r2_account_id',
-  R2_BUCKET_NAME: 'raka_r2_bucket_name',
-  R2_PUBLIC_URL: 'raka_r2_public_url',
-  R2_WORKER_PROXY: 'raka_r2_worker_proxy'
-};
-
 export function getStoredR2Config(): R2Config {
-  const envAccountId = import.meta.env.VITE_CF_R2_ACCOUNT_ID || '';
-  const envBucket = import.meta.env.VITE_CF_R2_BUCKET_NAME || 'raka-learning-assets';
-  const envPublicUrl = import.meta.env.VITE_CF_R2_PUBLIC_URL || '';
-
-  const storedAccountId = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.R2_ACCOUNT_ID) || '' : '';
-  const storedBucket = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.R2_BUCKET_NAME) || '' : '';
-  const storedPublicUrl = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.R2_PUBLIC_URL) || '' : '';
-  const storedProxy = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.R2_WORKER_PROXY) || '' : '';
-
   return {
-    accountId: storedAccountId || envAccountId,
-    bucketName: storedBucket || envBucket,
-    publicUrl: storedPublicUrl || envPublicUrl,
-    workerProxyUrl: storedProxy
+    accountId: import.meta.env.VITE_CF_R2_ACCOUNT_ID || '',
+    bucketName: import.meta.env.VITE_CF_R2_BUCKET_NAME || 'raka-learning-assets',
+    publicUrl: import.meta.env.VITE_CF_R2_PUBLIC_URL || '',
+    workerProxyUrl: import.meta.env.VITE_CF_R2_WORKER_PROXY || ''
   };
 }
 
-export function saveR2Config(config: Partial<R2Config>) {
-  if (typeof window !== 'undefined') {
-    if (config.accountId !== undefined) localStorage.setItem(STORAGE_KEYS.R2_ACCOUNT_ID, config.accountId.trim());
-    if (config.bucketName !== undefined) localStorage.setItem(STORAGE_KEYS.R2_BUCKET_NAME, config.bucketName.trim());
-    if (config.publicUrl !== undefined) localStorage.setItem(STORAGE_KEYS.R2_PUBLIC_URL, config.publicUrl.trim());
-    if (config.workerProxyUrl !== undefined) localStorage.setItem(STORAGE_KEYS.R2_WORKER_PROXY, config.workerProxyUrl.trim());
-  }
+export function saveR2Config(_config: Partial<R2Config>) {
 }
 
 export function clearR2Config() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEYS.R2_ACCOUNT_ID);
-    localStorage.removeItem(STORAGE_KEYS.R2_BUCKET_NAME);
-    localStorage.removeItem(STORAGE_KEYS.R2_PUBLIC_URL);
-    localStorage.removeItem(STORAGE_KEYS.R2_WORKER_PROXY);
-  }
 }
 
 export interface UploadResult {

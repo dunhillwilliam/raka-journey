@@ -1,35 +1,11 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { SessionReport, CuriosityItem, ParentFeedbackItem, MonthlyReportData, Artwork, UserProfile } from '../types';
-import {
-  INITIAL_SESSIONS,
-  INITIAL_CURIOSITY_ITEMS,
-  INITIAL_PARENT_FEEDBACK,
-  INITIAL_MONTHLY_REPORT,
-  INITIAL_ARTWORKS,
-  INITIAL_USER_PROFILE
-} from './initialData';
+import { SessionReport, CuriosityItem, ParentFeedbackItem, Artwork, UserProfile } from '../types';
 
-const STORAGE_KEYS = {
-  SUPABASE_URL: 'raka_supabase_url',
-  SUPABASE_ANON_KEY: 'raka_supabase_anon_key',
-  SESSIONS: 'raka_local_sessions',
-  CURIOSITY: 'raka_local_curiosity',
-  PARENT_FEEDBACK: 'raka_local_parent_feedback',
-  MONTHLY_REPORT: 'raka_local_monthly_report',
-  ARTWORKS: 'raka_local_artworks',
-  USER_PROFILE: 'raka_local_user_profile'
-};
-
-// Retrieve configured or env credentials
+// Retrieve env credentials
 export function getStoredSupabaseConfig(): { url: string; anonKey: string } {
-  const envUrl = import.meta.env.VITE_SUPABASE_URL || '';
-  const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-  const storedUrl = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.SUPABASE_URL) || '' : '';
-  const storedKey = typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.SUPABASE_ANON_KEY) || '' : '';
-
   return {
-    url: storedUrl || envUrl,
-    anonKey: storedKey || envKey
+    url: import.meta.env.VITE_SUPABASE_URL || '',
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || ''
   };
 }
 
@@ -56,19 +32,11 @@ export function getSupabaseClient(): SupabaseClient | null {
 }
 
 export function setCustomSupabaseCredentials(url: string, anonKey: string) {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEYS.SUPABASE_URL, url.trim());
-    localStorage.setItem(STORAGE_KEYS.SUPABASE_ANON_KEY, anonKey.trim());
-    supabaseInstance = null; // reset instance
-  }
+  supabaseInstance = null; // reset instance
 }
 
 export function clearCustomSupabaseCredentials() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEYS.SUPABASE_URL);
-    localStorage.removeItem(STORAGE_KEYS.SUPABASE_ANON_KEY);
-    supabaseInstance = null;
-  }
+  supabaseInstance = null;
 }
 
 export async function testSupabaseConnection(url?: string, anonKey?: string): Promise<{ success: boolean; message: string }> {
@@ -112,384 +80,257 @@ export async function testSupabaseConnection(url?: string, anonKey?: string): Pr
 
 export async function getSessions(): Promise<SessionReport[]> {
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { data, error } = await client
-        .from('sessions')
-        .select('*')
-        .order('session_number', { ascending: false });
+  if (!client) return [];
+  const { data, error } = await client
+    .from('sessions')
+    .select('*')
+    .order('session_number', { ascending: false });
 
-      if (!error && data) {
-        const loaded = data.map(row => ({
-          id: row.id,
-          sessionNumber: row.session_number,
-          date: row.date,
-          formattedDate: row.formatted_date,
-          title: row.title,
-          durationMinutes: row.duration_minutes,
-          format: row.format,
-          mentorName: row.mentor_name,
-          topicsLearned: row.topics_learned || [],
-          curiosity: row.curiosity || { question: '', category: '', level: 'Sedang' },
-          mentorObservation: row.mentor_observation || { notes: '', strengths: [], areasForDevelopment: [] },
-          activities: row.activities || { tasks: [] },
-          parentFeedback: row.parent_feedback || { quote: '', parentName: '', date: '' },
-          nextSessionPlan: row.next_session_plan || [],
-          scores: row.scores || { creativity: 80, criticalThinking: 75, communication: 75, digitalSkills: 80, independence: 70 }
-        }));
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(loaded));
-        }
-        return loaded;
-      }
-    } catch (e) {
-      console.warn('Falling back to local data for sessions:', e);
-    }
+  if (error) {
+    throw error;
   }
+  if (!data) return [];
 
-  // LocalStorage Fallback (cached real sessions)
-  if (typeof window !== 'undefined') {
-    const cached = localStorage.getItem(STORAGE_KEYS.SESSIONS);
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch {}
-    }
-  }
-
-  return INITIAL_SESSIONS; // empty array []
+  return data.map(row => ({
+    id: row.id,
+    sessionNumber: row.session_number,
+    date: row.date,
+    formattedDate: row.formatted_date,
+    title: row.title,
+    durationMinutes: row.duration_minutes,
+    format: row.format,
+    mentorName: row.mentor_name,
+    topicsLearned: row.topics_learned || [],
+    curiosity: row.curiosity || { question: '', category: '', level: 'Sedang' },
+    mentorObservation: row.mentor_observation || { notes: '', strengths: [], areasForDevelopment: [] },
+    activities: row.activities || { tasks: [] },
+    parentFeedback: row.parent_feedback || { quote: '', parentName: '', date: '' },
+    nextSessionPlan: row.next_session_plan || [],
+    scores: row.scores || { creativity: 80, criticalThinking: 75, communication: 75, digitalSkills: 80, independence: 70 }
+  }));
 }
 
 export async function saveSessionToDb(session: SessionReport): Promise<boolean> {
-  if (typeof window !== 'undefined') {
-    try {
-      const current = await getSessions();
-      const existingIdx = current.findIndex(s => s.id === session.id);
-      let updated: SessionReport[];
-      if (existingIdx >= 0) {
-        updated = [...current];
-        updated[existingIdx] = session;
-      } else {
-        updated = [session, ...current];
-      }
-      localStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify(updated));
-    } catch {}
-  }
-
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const dbRow = {
-        id: session.id,
-        session_number: session.sessionNumber,
-        date: session.date,
-        formatted_date: session.formattedDate,
-        title: session.title,
-        duration_minutes: session.durationMinutes,
-        format: session.format,
-        mentor_name: session.mentorName,
-        topics_learned: session.topicsLearned,
-        curiosity: session.curiosity,
-        mentor_observation: session.mentorObservation,
-        activities: session.activities,
-        parent_feedback: session.parentFeedback,
-        next_session_plan: session.nextSessionPlan,
-        scores: session.scores,
-        updated_at: new Date().toISOString()
-      };
+  if (!client) return false;
 
-      const { error } = await client.from('sessions').upsert(dbRow);
-      if (error) throw error;
-      return true;
-    } catch (err) {
-      console.warn('Failed to persist session to Supabase, saved locally:', err);
-    }
+  try {
+    const dbRow = {
+      id: session.id,
+      session_number: session.sessionNumber,
+      date: session.date,
+      formatted_date: session.formattedDate,
+      title: session.title,
+      duration_minutes: session.durationMinutes,
+      format: session.format,
+      mentor_name: session.mentorName,
+      topics_learned: session.topicsLearned,
+      curiosity: session.curiosity,
+      mentor_observation: session.mentorObservation,
+      activities: session.activities,
+      parent_feedback: session.parentFeedback,
+      next_session_plan: session.nextSessionPlan,
+      scores: session.scores,
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await client.from('sessions').upsert(dbRow);
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.warn('Failed to persist session to Supabase:', err);
+    return false;
   }
-
-  return true;
 }
 
 export async function getCuriosityList(): Promise<CuriosityItem[]> {
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { data, error } = await client
-        .from('curiosity_questions')
-        .select('*')
-        .order('date', { ascending: false });
+  if (!client) return [];
+  const { data, error } = await client
+    .from('curiosity_questions')
+    .select('*')
+    .order('date', { ascending: false });
 
-      if (!error && data) {
-        const loaded = data.map(q => ({
-          id: q.id,
-          question: q.question,
-          date: q.date,
-          formattedDate: q.formatted_date,
-          topic: q.topic,
-          level: q.level,
-          status: q.status,
-          answeredInSession: q.answered_in_session
-        }));
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEYS.CURIOSITY, JSON.stringify(loaded));
-        }
-        return loaded;
-      }
-    } catch (e) {
-      console.warn('Fallback to local curiosity questions:', e);
-    }
-  }
+  if (error) throw error;
+  if (!data) return [];
 
-  if (typeof window !== 'undefined') {
-    const cached = localStorage.getItem(STORAGE_KEYS.CURIOSITY);
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch {}
-    }
-  }
-
-  return INITIAL_CURIOSITY_ITEMS; // empty array []
+  return data.map(q => ({
+    id: q.id,
+    question: q.question,
+    date: q.date,
+    formattedDate: q.formatted_date,
+    topic: q.topic,
+    level: q.level,
+    status: q.status,
+    answeredInSession: q.answered_in_session
+  }));
 }
 
 export async function saveCuriosityToDb(item: CuriosityItem): Promise<boolean> {
-  if (typeof window !== 'undefined') {
-    const list = await getCuriosityList();
-    const updated = [item, ...list.filter(i => i.id !== item.id)];
-    localStorage.setItem(STORAGE_KEYS.CURIOSITY, JSON.stringify(updated));
-  }
-
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { error } = await client.from('curiosity_questions').upsert({
-        id: item.id,
-        question: item.question,
-        date: item.date,
-        formatted_date: item.formattedDate,
-        topic: item.topic,
-        level: item.level,
-        status: item.status,
-        answered_in_session: item.answeredInSession
-      });
-      if (error) throw error;
-    } catch (err) {
-      console.warn('Supabase curiosity upsert failed:', err);
-    }
+  if (!client) return false;
+
+  try {
+    const { error } = await client.from('curiosity_questions').upsert({
+      id: item.id,
+      question: item.question,
+      date: item.date,
+      formatted_date: item.formattedDate,
+      topic: item.topic,
+      level: item.level,
+      status: item.status,
+      answered_in_session: item.answeredInSession
+    });
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.warn('Supabase curiosity upsert failed:', err);
+    return false;
   }
-  return true;
 }
 
 export async function getParentFeedbacks(): Promise<ParentFeedbackItem[]> {
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { data, error } = await client
-        .from('parent_feedbacks')
-        .select('*')
-        .order('week_number', { ascending: false });
+  if (!client) return [];
+  const { data, error } = await client
+    .from('parent_feedbacks')
+    .select('*')
+    .order('week_number', { ascending: false });
 
-      if (!error && data) {
-        const loaded = data.map(f => ({
-          id: f.id,
-          weekName: f.week_name,
-          weekNumber: f.week_number,
-          date: f.date,
-          engagementRate: f.engagement_rate,
-          checklist: f.checklist || [],
-          parentNote: f.parent_note,
-          developmentTarget: f.development_target
-        }));
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEYS.PARENT_FEEDBACK, JSON.stringify(loaded));
-        }
-        return loaded;
-      }
-    } catch (e) {
-      console.warn('Fallback to local parent feedbacks:', e);
-    }
-  }
+  if (error) throw error;
+  if (!data) return [];
 
-  if (typeof window !== 'undefined') {
-    const cached = localStorage.getItem(STORAGE_KEYS.PARENT_FEEDBACK);
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch {}
-    }
-  }
-
-  return INITIAL_PARENT_FEEDBACK; // empty array []
+  return data.map(f => ({
+    id: f.id,
+    weekName: f.week_name,
+    weekNumber: f.week_number,
+    date: f.date,
+    engagementRate: f.engagement_rate,
+    checklist: f.checklist || [],
+    parentNote: f.parent_note,
+    developmentTarget: f.development_target
+  }));
 }
 
 export async function saveParentFeedbackToDb(item: ParentFeedbackItem): Promise<boolean> {
-  if (typeof window !== 'undefined') {
-    const list = await getParentFeedbacks();
-    const updated = [item, ...list.filter(i => i.id !== item.id)];
-    localStorage.setItem(STORAGE_KEYS.PARENT_FEEDBACK, JSON.stringify(updated));
-  }
-
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { error } = await client.from('parent_feedbacks').upsert({
-        id: item.id,
-        week_name: item.weekName,
-        week_number: item.weekNumber,
-        date: item.date,
-        engagement_rate: item.engagementRate,
-        checklist: item.checklist,
-        parent_note: item.parentNote,
-        development_target: item.developmentTarget
-      });
-      if (error) throw error;
-    } catch (err) {
-      console.warn('Supabase parent feedback upsert failed:', err);
-    }
+  if (!client) return false;
+
+  try {
+    const { error } = await client.from('parent_feedbacks').upsert({
+      id: item.id,
+      week_name: item.weekName,
+      week_number: item.weekNumber,
+      date: item.date,
+      engagement_rate: item.engagementRate,
+      checklist: item.checklist,
+      parent_note: item.parentNote,
+      development_target: item.developmentTarget
+    });
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.warn('Supabase parent feedback upsert failed:', err);
+    return false;
   }
-  return true;
 }
 
 export async function getArtworksList(): Promise<Artwork[]> {
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { data, error } = await client
-        .from('artworks')
-        .select('*')
-        .order('date', { ascending: false });
+  if (!client) return [];
+  const { data, error } = await client
+    .from('artworks')
+    .select('*')
+    .order('date', { ascending: false });
 
-      if (!error && data) {
-        const loaded = data.map(a => ({
-          id: a.id,
-          title: a.title,
-          category: a.category,
-          date: a.date,
-          formattedDate: a.formatted_date,
-          duration: a.duration,
-          thumbnailUrl: a.thumbnail_url || '',
-          fileUrl: a.file_url,
-          fileSize: a.file_size,
-          storageProvider: a.storage_provider || 'cloudflare_r2',
-          r2Bucket: a.r2_bucket,
-          r2Key: a.r2_key,
-          description: a.description
-        }));
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEYS.ARTWORKS, JSON.stringify(loaded));
-        }
-        return loaded;
-      }
-    } catch (e) {
-      console.warn('Fallback to local artworks list:', e);
-    }
-  }
+  if (error) throw error;
+  if (!data) return [];
 
-  if (typeof window !== 'undefined') {
-    const cached = localStorage.getItem(STORAGE_KEYS.ARTWORKS);
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch {}
-    }
-  }
-
-  return INITIAL_ARTWORKS; // empty array []
+  return data.map(a => ({
+    id: a.id,
+    title: a.title,
+    category: a.category,
+    date: a.date,
+    formattedDate: a.formatted_date,
+    duration: a.duration,
+    thumbnailUrl: a.thumbnail_url || '',
+    fileUrl: a.file_url,
+    fileSize: a.file_size,
+    storageProvider: a.storage_provider || 'cloudflare_r2',
+    r2Bucket: a.r2_bucket,
+    r2Key: a.r2_key,
+    description: a.description
+  }));
 }
 
 export async function saveArtworkToDb(item: Artwork): Promise<boolean> {
-  if (typeof window !== 'undefined') {
-    const list = await getArtworksList();
-    const updated = [item, ...list.filter(i => i.id !== item.id)];
-    localStorage.setItem(STORAGE_KEYS.ARTWORKS, JSON.stringify(updated));
-  }
-
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { error } = await client.from('artworks').upsert({
-        id: item.id,
-        title: item.title,
-        category: item.category,
-        date: item.date,
-        formatted_date: item.formattedDate,
-        duration: item.duration,
-        thumbnail_url: item.thumbnailUrl,
-        file_url: item.fileUrl,
-        file_size: item.fileSize,
-        storage_provider: item.storageProvider || 'cloudflare_r2',
-        r2_bucket: item.r2Bucket,
-        r2_key: item.r2Key,
-        description: item.description
-      });
-      if (error) throw error;
-    } catch (err) {
-      console.warn('Supabase artwork upsert failed:', err);
-    }
+  if (!client) return false;
+
+  try {
+    const { error } = await client.from('artworks').upsert({
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      date: item.date,
+      formatted_date: item.formattedDate,
+      duration: item.duration,
+      thumbnail_url: item.thumbnailUrl,
+      file_url: item.fileUrl,
+      file_size: item.fileSize,
+      storage_provider: item.storageProvider || 'cloudflare_r2',
+      r2_bucket: item.r2Bucket,
+      r2_key: item.r2Key,
+      description: item.description
+    });
+    if (error) throw error;
+    return true;
+  } catch (err) {
+    console.warn('Supabase artwork upsert failed:', err);
+    return false;
   }
-  return true;
 }
 
-export async function getUserProfile(): Promise<UserProfile> {
+export async function getUserProfile(): Promise<UserProfile | null> {
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      const { data, error } = await client
-        .from('user_profile')
-        .select('*')
-        .limit(1)
-        .single();
+  if (!client) return null;
+  const { data, error } = await client
+    .from('user_profile')
+    .select('*')
+    .limit(1)
+    .single();
 
-      if (!error && data) {
-        const loaded: UserProfile = {
-          name: data.name,
-          age: data.age,
-          interests: data.interests || [],
-          avatarUrl: data.avatar_url || '',
-          notifications: data.notifications || { newSession: true, parentFeedback: true, monthlyProgress: true }
-        };
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(loaded));
-        }
-        return loaded;
-      }
-    } catch (e) {
-      console.warn('Fallback to local user profile:', e);
-    }
-  }
+  if (error) throw error;
+  if (!data) return null;
 
-  if (typeof window !== 'undefined') {
-    const cached = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch {}
-    }
-  }
-  return INITIAL_USER_PROFILE;
+  return {
+    name: data.name,
+    age: data.age,
+    interests: data.interests || [],
+    avatarUrl: data.avatar_url || '',
+    notifications: data.notifications || { newSession: true, parentFeedback: true, monthlyProgress: true }
+  };
 }
 
 export async function saveUserProfile(profile: UserProfile): Promise<boolean> {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(profile));
-  }
-
   const client = getSupabaseClient();
-  if (client) {
-    try {
-      await client.from('user_profile').upsert({
-        id: 'default',
-        name: profile.name,
-        age: profile.age,
-        interests: profile.interests,
-        avatar_url: profile.avatarUrl,
-        notifications: profile.notifications,
-        updated_at: new Date().toISOString()
-      });
-    } catch (err) {
-      console.warn('Supabase user_profile upsert failed:', err);
-    }
+  if (!client) return false;
+
+  try {
+    await client.from('user_profile').upsert({
+      id: 'default',
+      name: profile.name,
+      age: profile.age,
+      interests: profile.interests,
+      avatar_url: profile.avatarUrl,
+      notifications: profile.notifications,
+      updated_at: new Date().toISOString()
+    });
+    return true;
+  } catch (err) {
+    console.warn('Supabase user_profile upsert failed:', err);
+    return false;
   }
-  return true;
 }
 
 // SQL Migration Script ready to run in Supabase SQL Editor

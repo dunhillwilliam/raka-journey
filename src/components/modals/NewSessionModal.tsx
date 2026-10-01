@@ -5,49 +5,40 @@ import { useApp } from '../../context/AppContext';
 export const NewSessionModal: React.FC = () => {
   const { isNewSessionModalOpen, setIsNewSessionModalOpen, addSession, sessions, setActiveTab } = useApp();
 
-  const nextSessionNum = (sessions[0]?.sessionNumber || 4) + 1;
+  const nextSessionNum = (sessions[0]?.sessionNumber || 0) + 1;
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [sessionTitle, setSessionTitle] = useState('');
   const [sessionDate, setSessionDate] = useState(todayStr);
   const [duration, setDuration] = useState(60);
   const [format, setFormat] = useState<'Online' | 'Offline' | 'Hybrid'>('Online');
-  const [mentorName, setMentorName] = useState('Kak Sabina');
+  const [mentorName, setMentorName] = useState('');
 
   // Topics learned
-  const [topics, setTopics] = useState<string[]>([
-    'Eksplorasi teknik transisi dinamis',
-    'Menyelaraskan efek suara dengan tempo video'
-  ]);
+  const [topics, setTopics] = useState<string[]>([]);
   const [newTopicInput, setNewTopicInput] = useState('');
 
   // Curiosity
   const [curiosityQuestion, setCuriosityQuestion] = useState('');
-  const [curiosityCategory, setCuriosityCategory] = useState('Video Editing');
-  const [curiosityLevel, setCuriosityLevel] = useState<'Tinggi' | 'Sedang' | 'Rendah'>('Tinggi');
+  const [curiosityCategory, setCuriosityCategory] = useState('');
+  const [curiosityLevel, setCuriosityLevel] = useState<'Tinggi' | 'Sedang' | 'Rendah'>('Sedang');
 
   // Mentor Observation
   const [mentorNotes, setMentorNotes] = useState('');
-  const [strengths, setStrengths] = useState<string[]>(['Keberanian mencoba fitur baru', 'Fokus']);
+  const [strengths, setStrengths] = useState<string[]>([]);
   const [newStrengthInput, setNewStrengthInput] = useState('');
-  const [developments, setDevelopments] = useState<string[]>(['Memperhatikan detail pacing cerita']);
+  const [developments, setDevelopments] = useState<string[]>([]);
   const [newDevInput, setNewDevInput] = useState('');
 
   // Activities
-  const [tasks, setTasks] = useState<string[]>([
-    'Memotong video 1.5 menit',
-    'Export dan uji coba preview audio'
-  ]);
+  const [tasks, setTasks] = useState<string[]>([]);
   const [newTaskInput, setNewTaskInput] = useState('');
 
   // Parent Feedback
   const [parentQuote, setParentQuote] = useState('');
 
   // Next Session Plan
-  const [plans, setPlans] = useState<string[]>([
-    'Review hasil video bersama keluarga',
-    'Mulai membuat storyboard untuk proyek baru'
-  ]);
+  const [plans, setPlans] = useState<string[]>([]);
   const [newPlanInput, setNewPlanInput] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -113,12 +104,12 @@ export const NewSessionModal: React.FC = () => {
       mentorName,
       topicsLearned: topics.map((t, idx) => ({ id: `t-${idx}`, text: t, completed: true })),
       curiosity: {
-        question: curiosityQuestion || 'Bagaimana cara menambahkan efek audio yang pas?',
+        question: curiosityQuestion,
         category: curiosityCategory,
         level: curiosityLevel
       },
       mentorObservation: {
-        notes: mentorNotes || 'Raka sangat antusias dan menunjukkan inisiatif yang baik dalam menyelesaikan proyek hari ini.',
+        notes: mentorNotes,
         strengths,
         areasForDevelopment: developments
       },
@@ -126,7 +117,7 @@ export const NewSessionModal: React.FC = () => {
         tasks: tasks.map((t, idx) => ({ id: `act-${idx}`, text: t, completed: true }))
       },
       parentFeedback: {
-        quote: parentQuote || 'Raka senang sekali dan terus menceritakan pengalamannya.',
+        quote: parentQuote,
         parentName: 'Orang Tua Raka',
         date: formattedDate
       },
@@ -145,7 +136,7 @@ export const NewSessionModal: React.FC = () => {
           <div className="min-w-0 pr-2">
             <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">Mulai Sesi Baru &middot; Daily Report</h3>
             <p className="text-[10px] sm:text-xs text-slate-500 truncate">
-              Dokumentasikan sesi ke-{nextSessionNum} (Tersimpan ke Supabase &amp; Cache)
+              Dokumentasikan sesi ke-{nextSessionNum} (Tersimpan ke Supabase)
             </p>
           </div>
           <button

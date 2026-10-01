@@ -6,8 +6,8 @@ export const NewCuriosityModal: React.FC = () => {
   const { isNewCuriosityModalOpen, setIsNewCuriosityModalOpen, addCuriosityItem } = useApp();
 
   const [question, setQuestion] = useState('');
-  const [topic, setTopic] = useState('Visual Storytelling');
-  const [level, setLevel] = useState<'Tinggi' | 'Sedang' | 'Rendah'>('Tinggi');
+  const [topic, setTopic] = useState('');
+  const [level, setLevel] = useState<'Tinggi' | 'Sedang' | 'Rendah'>('Sedang');
 
   if (!isNewCuriosityModalOpen) return null;
 

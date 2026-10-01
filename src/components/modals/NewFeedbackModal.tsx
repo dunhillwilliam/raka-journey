@@ -5,18 +5,18 @@ import { useApp } from '../../context/AppContext';
 export const NewFeedbackModal: React.FC = () => {
   const { isNewFeedbackModalOpen, setIsNewFeedbackModalOpen, addParentFeedback, parentFeedbacks } = useApp();
 
-  const nextWeekNum = (parentFeedbacks[0]?.weekNumber || 4) + 1;
-  const [weekName, setWeekName] = useState(`Minggu ${nextWeekNum}`);
-  const [engagementRate, setEngagementRate] = useState(90);
+  const nextWeekNum = (parentFeedbacks[0]?.weekNumber || 0) + 1;
+  const [weekName, setWeekName] = useState('');
+  const [engagementRate, setEngagementRate] = useState<number>(0);
   const [parentNote, setParentNote] = useState('');
   const [developmentTarget, setDevelopmentTarget] = useState('');
 
   const [checklist, setChecklist] = useState([
-    { id: 'c1', text: 'Raka menceritakan materi yang dipelajari', checked: true },
-    { id: 'c2', text: 'Raka mencoba hal yang dipelajari secara mandiri', checked: true },
-    { id: 'c3', text: 'Raka menunjukkan ketertarikan pada topik tertentu', checked: true },
+    { id: 'c1', text: 'Raka menceritakan materi yang dipelajari', checked: false },
+    { id: 'c2', text: 'Raka mencoba hal yang dipelajari secara mandiri', checked: false },
+    { id: 'c3', text: 'Raka menunjukkan ketertarikan pada topik tertentu', checked: false },
     { id: 'c4', text: 'Raka mengalami kesulitan tertentu', checked: false },
-    { id: 'c5', text: 'Ada hal lain yang ingin disampaikan', checked: true }
+    { id: 'c5', text: 'Ada hal lain yang ingin disampaikan', checked: false }
   ]);
 
   if (!isNewFeedbackModalOpen) return null;
@@ -28,12 +28,12 @@ export const NewFeedbackModal: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await addParentFeedback({
-      weekName: `${weekName} (${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })})`,
+      weekName: weekName ? `${weekName} (${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })})` : '',
       weekNumber: nextWeekNum,
-      engagementRate: Number(engagementRate) || 85,
+      engagementRate: Number(engagementRate) || 0,
       checklist,
-      parentNote: parentNote || 'Raka sangat bersemangat mempraktekkan apa yang dipelajari.',
-      developmentTarget: developmentTarget || 'Mendorong Raka untuk terus bereksplorasi.'
+      parentNote: parentNote || '',
+      developmentTarget: developmentTarget || ''
     });
 
     setIsNewFeedbackModalOpen(false);

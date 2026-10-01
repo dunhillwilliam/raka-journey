@@ -7,7 +7,7 @@ export const UploadArtworkModal: React.FC = () => {
   const { isUploadModalOpen, setIsUploadModalOpen, uploadArtwork, cloudConfig } = useApp();
 
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<Artwork['category']>('Video');
+  const [category, setCategory] = useState<Artwork['category'] | ''>('');
   const [description, setDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -25,8 +25,8 @@ export const UploadArtworkModal: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !selectedFile) {
-      setErrorMessage('Silakan lengkapi judul karya dan pilih file yang ingin diunggah.');
+    if (!title.trim() || !selectedFile || !category) {
+      setErrorMessage('Silakan lengkapi judul karya, pilih kategori, dan pilih file yang ingin diunggah.');
       return;
     }
 
@@ -98,6 +98,7 @@ export const UploadArtworkModal: React.FC = () => {
               onChange={(e) => setCategory(e.target.value as any)}
               className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-h-[42px]"
             >
+              <option value="" disabled>Pilih kategori... </option>
               <option value="Video">Video</option>
               <option value="Desain">Desain</option>
               <option value="Presentasi">Presentasi</option>

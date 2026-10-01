@@ -1,24 +1,4 @@
-import {
-  SessionReport,
-  CuriosityItem,
-  ParentFeedbackItem,
-  MonthlyReportData,
-  Artwork,
-  UserProfile,
-  CompetencyProgressItem
-} from '../types';
-
-export const INITIAL_USER_PROFILE: UserProfile = {
-  name: 'Raka Daniswara',
-  age: 9,
-  interests: ['Digital Storytelling', 'Video Editing', 'Creative Design'],
-  avatarUrl: '',
-  notifications: {
-    newSession: true,
-    parentFeedback: true,
-    monthlyProgress: true
-  }
-};
+import { CompetencyProgressItem } from '../types';
 
 export const INITIAL_COMPETENCIES: CompetencyProgressItem[] = [
   {
@@ -67,32 +47,3 @@ export const INITIAL_COMPETENCIES: CompetencyProgressItem[] = [
     color: '#8B5CF6' // violet/purple
   }
 ];
-
-// No dummy data - loaded and synced entirely from Supabase
-export const INITIAL_SESSIONS: SessionReport[] = [];
-
-export const INITIAL_CURIOSITY_ITEMS: CuriosityItem[] = [];
-
-export const INITIAL_PARENT_FEEDBACK: ParentFeedbackItem[] = [];
-
-export const INITIAL_ARTWORKS: Artwork[] = [];
-
-export const INITIAL_MONTHLY_REPORT: MonthlyReportData = {
-  id: 'month-01',
-  month: 'September 2026',
-  year: 2026,
-  growthStory: '',
-  highlights: {
-    biggestGrowth: '',
-    mostCuriousAbout: '',
-    mentorNoticed: '',
-    parentNoticed: ''
-  },
-  recap: {
-    totalSessions: 0,
-    attendanceRate: 100,
-    totalProjects: 0,
-    totalQuestions: 0
-  },
-  targetsNextMonth: []
-};

@@ -10,11 +10,7 @@ import {
   UserRole,
   CloudConfig
 } from '../types';
-import {
-  INITIAL_COMPETENCIES,
-  INITIAL_MONTHLY_REPORT,
-  INITIAL_USER_PROFILE
-} from '../lib/initialData';
+import { INITIAL_COMPETENCIES } from '../lib/initialData';
 import {
   getSessions,
   saveSessionToDb,
@@ -130,21 +126,10 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<NavTab>('beranda');
-  const [userRole, setUserRoleState] = useState<UserRole>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('raka_active_role');
-      if (saved === 'mentor' || saved === 'parent' || saved === 'student') {
-        return saved;
-      }
-    }
-    return 'mentor';
-  });
+  const [userRole, setUserRoleState] = useState<UserRole>('mentor');
 
   const setUserRole = (role: UserRole) => {
     setUserRoleState(role);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('raka_active_role', role);
-    }
     setActiveTab(currentTab => {
       if (ROLE_TAB_ACCESS[role].includes(currentTab)) {
         return currentTab;
@@ -162,9 +147,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentSessionId, setCurrentSessionId] = useState<string>('');
   const [curiosityItems, setCuriosityItems] = useState<CuriosityItem[]>([]);
   const [parentFeedbacks, setParentFeedbacks] = useState<ParentFeedbackItem[]>([]);
-  const [monthlyReport, setMonthlyReport] = useState<MonthlyReportData>(INITIAL_MONTHLY_REPORT);
-  const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfile>(INITIAL_USER_PROFILE);
+const [monthlyReport, setMonthlyReport] = useState<MonthlyReportData>({
+  id: '',
+  month: '',
+  year: new Date().getFullYear(),
+  growthStory: '',
+  highlights: { biggestGrowth: '', mostCuriousAbout: '', mentorNoticed: '', parentNoticed: '' },
+  recap: { totalSessions: 0, attendanceRate: 100, totalProjects: 0, totalQuestions: 0 },
+  targetsNextMonth: []
+});
+const [artworks, setArtworks] = useState<Artwork[]>([]);
+const [userProfile, setUserProfile] = useState<UserProfile>({
+  name: '',
+  age: 0,
+  interests: [],
+  avatarUrl: '',
+  notifications: { newSession: true, parentFeedback: true, monthlyProgress: true }
+});
 
   // Cloud Config
   const [cloudConfig, setCloudConfig] = useState<CloudConfig>({
@@ -230,7 +229,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCuriosityItems(loadedCuriosity);
         setParentFeedbacks(loadedFeedbacks);
         setArtworks(loadedArtworks);
-        setUserProfile(loadedProfile);
+        if (loadedProfile) {
+          setUserProfile(loadedProfile);
+        }
 
         // Check stored Cloud credentials
         const sbConfig = getStoredSupabaseConfig();
@@ -488,7 +489,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCuriosityItems(loadedCuriosity);
       setParentFeedbacks(loadedFeedbacks);
       setArtworks(loadedArtworks);
-      setUserProfile(loadedProfile);
+      if (loadedProfile) setUserProfile(loadedProfile);
     } catch (e) {
       console.warn('Error reloading data with updated credentials:', e);
     }
@@ -497,10 +498,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const resetToDefaultDemoData = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.clear();
-      window.location.reload();
-    }
+    window.location.reload();
   };
 
   return (
