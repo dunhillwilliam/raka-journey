@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppProvider, useApp } from './context/AppContext';
+import { AppProvider, useApp, ROLE_TAB_ACCESS } from './context/AppContext';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DashboardView } from './components/views/DashboardView';
@@ -17,7 +17,8 @@ import { UploadArtworkModal } from './components/modals/UploadArtworkModal';
 import { PdfPreviewModal } from './components/modals/PdfPreviewModal';
 
 const MainLayout: React.FC = () => {
-  const { activeTab } = useApp();
+  const { activeTab, userRole } = useApp();
+  const accessibleTab = ROLE_TAB_ACCESS[userRole].includes(activeTab) ? activeTab : 'beranda';
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800 antialiased font-sans">
@@ -29,14 +30,14 @@ const MainLayout: React.FC = () => {
         <Header />
 
         <main className="flex-1 p-3.5 sm:p-5 md:p-8 pb-12 overflow-y-auto">
-          {activeTab === 'beranda' && <DashboardView />}
-          {activeTab === 'daily-report' && <DailyReportView />}
-          {activeTab === 'progress' && <ProgressView />}
-          {activeTab === 'curiosity' && <CuriosityView />}
-          {activeTab === 'parent-corner' && <ParentCornerView />}
-          {activeTab === 'monthly-report' && <MonthlyReportView />}
-          {activeTab === 'galeri-karya' && <GalleryView />}
-          {activeTab === 'pengaturan' && <SettingsView />}
+          {accessibleTab === 'beranda' && <DashboardView />}
+          {accessibleTab === 'daily-report' && <DailyReportView />}
+          {accessibleTab === 'progress' && <ProgressView />}
+          {accessibleTab === 'curiosity' && <CuriosityView />}
+          {accessibleTab === 'parent-corner' && <ParentCornerView />}
+          {accessibleTab === 'monthly-report' && <MonthlyReportView />}
+          {accessibleTab === 'galeri-karya' && <GalleryView />}
+          {accessibleTab === 'pengaturan' && <SettingsView />}
         </main>
       </div>
 

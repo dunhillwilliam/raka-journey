@@ -46,11 +46,39 @@ export type NavTab =
   | 'galeri-karya'
   | 'pengaturan';
 
+export const ROLE_TAB_ACCESS: Record<UserRole, NavTab[]> = {
+  mentor: [
+    'beranda',
+    'daily-report',
+    'progress',
+    'curiosity',
+    'parent-corner',
+    'monthly-report',
+    'galeri-karya',
+    'pengaturan'
+  ],
+  parent: [
+    'beranda',
+    'daily-report',
+    'progress',
+    'curiosity',
+    'parent-corner',
+    'galeri-karya'
+  ],
+  student: [
+    'beranda',
+    'progress',
+    'curiosity',
+    'galeri-karya'
+  ]
+};
+
 interface AppContextType {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
+  hasTabAccess: (tab: NavTab) => boolean;
   
   // Data
   sessions: SessionReport[];
@@ -117,7 +145,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (typeof window !== 'undefined') {
       localStorage.setItem('raka_active_role', role);
     }
+    setActiveTab(currentTab => {
+      if (ROLE_TAB_ACCESS[role].includes(currentTab)) {
+        return currentTab;
+      }
+      return ROLE_TAB_ACCESS[role][0];
+    });
   };
+
+  const hasTabAccess = (tab: NavTab) => ROLE_TAB_ACCESS[userRole].includes(tab);
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -474,6 +510,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveTab,
         userRole,
         setUserRole,
+        hasTabAccess,
         sessions,
         currentSession,
         selectSession,

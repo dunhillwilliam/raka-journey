@@ -14,7 +14,7 @@ import {
   HeartHandshake,
   Sparkles
 } from 'lucide-react';
-import { useApp, NavTab } from '../../context/AppContext';
+import { useApp, NavTab, ROLE_TAB_ACCESS } from '../../context/AppContext';
 
 interface NavItem {
   id: NavTab;
@@ -136,7 +136,7 @@ export const Sidebar: React.FC = () => {
 
         {/* Navigation List */}
         <nav className="p-3 space-y-1">
-          {NAV_ITEMS.map((item) => {
+          {NAV_ITEMS.filter(item => ROLE_TAB_ACCESS[userRole].includes(item.id)).map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
