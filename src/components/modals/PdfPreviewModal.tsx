@@ -16,7 +16,7 @@ export const PdfPreviewModal: React.FC = () => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-100 flex flex-col max-h-[92vh] my-6">
         {/* Modal Toolbar (Non-printable) */}
-        <div className="p-3.5 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 rounded-t-2xl shrink-0 print:hidden">
+        <div className="p-4 sm:p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50 rounded-t-2xl shrink-0 print:hidden">
           <div className="min-w-0 pr-2">
             <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate">Preview Laporan PDF</h3>
             <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">
@@ -43,7 +43,7 @@ export const PdfPreviewModal: React.FC = () => {
         </div>
 
         {/* Printable Document Sheet */}
-        <div id="printable-report" className="p-4 sm:p-8 overflow-y-auto space-y-4 sm:space-y-6 text-xs text-slate-800 bg-white">
+        <div id="printable-report" className="p-4 sm:p-4 overflow-y-auto space-y-4 sm:space-y-6 text-xs text-slate-800 bg-white">
           {/* Document Header */}
           <div className="border-b-2 border-slate-900 pb-4 sm:pb-5 flex flex-col xs:flex-row items-start xs:items-center justify-between gap-3">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -68,7 +68,7 @@ export const PdfPreviewModal: React.FC = () => {
           </div>
 
           {/* Session Overview Box */}
-          <div className="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-1.5 sm:space-y-2">
+          <div className="bg-slate-50 p-4 sm:p-4 rounded-xl border border-slate-200 space-y-1.5 sm:space-y-2">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
               <h2 className="text-xs sm:text-sm font-bold text-slate-900">{currentSession.title}</h2>
               <span className="text-[10px] sm:text-[11px] text-slate-600 font-medium">
@@ -97,7 +97,7 @@ export const PdfPreviewModal: React.FC = () => {
             <h3 className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-1 uppercase tracking-wider">
               2. Rasa Penasaran Raka (Curiosity)
             </h3>
-            <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
               <p className="font-semibold text-slate-900 italic text-xs">
                 &ldquo;{currentSession.curiosity.question}&rdquo;
               </p>
@@ -112,11 +112,11 @@ export const PdfPreviewModal: React.FC = () => {
             <h3 className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-1 uppercase tracking-wider">
               3. Observasi Mentor
             </h3>
-            <p className="text-slate-700 leading-relaxed italic bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs">
+            <p className="text-slate-700 leading-relaxed italic bg-slate-50 p-4 rounded-lg border border-slate-100 text-xs">
               &ldquo;{currentSession.mentorObservation.notes}&rdquo;
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
-              <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+              <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
                 <span className="font-bold text-emerald-900 block text-[10px] uppercase mb-1">Kekuatan (Strengths)</span>
                 <ul className="list-disc list-inside text-[11px] text-emerald-800 space-y-0.5">
                   {currentSession.mentorObservation.strengths.map((s, i) => (
@@ -124,7 +124,7 @@ export const PdfPreviewModal: React.FC = () => {
                   ))}
                 </ul>
               </div>
-              <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+              <div className="p-4 bg-amber-50 rounded-lg border border-amber-100">
                 <span className="font-bold text-amber-900 block text-[10px] uppercase mb-1">Area Pengembangan</span>
                 <ul className="list-disc list-inside text-[11px] text-amber-800 space-y-0.5">
                   {currentSession.mentorObservation.areasForDevelopment.map((a, i) => (
@@ -141,7 +141,7 @@ export const PdfPreviewModal: React.FC = () => {
               <h3 className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-1 uppercase tracking-wider">
                 Feedback Orang Tua
               </h3>
-              <p className="text-slate-700 italic bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-[11px]">
+              <p className="text-slate-700 italic bg-slate-50 p-4 rounded-lg border border-slate-100 text-[11px]">
                 &ldquo;{currentSession.parentFeedback.quote}&rdquo;
               </p>
             </div>
@@ -150,7 +150,7 @@ export const PdfPreviewModal: React.FC = () => {
               <h3 className="font-bold text-slate-900 text-xs border-b border-slate-200 pb-1 uppercase tracking-wider">
                 Rencana Sesi Berikutnya
               </h3>
-              <ul className="list-disc list-inside text-[11px] text-slate-700 space-y-1 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+              <ul className="list-disc list-inside text-[11px] text-slate-700 space-y-1 bg-slate-50 p-4 rounded-lg border border-slate-100">
                 {currentSession.nextSessionPlan.map((plan, i) => (
                   <li key={i}>{plan}</li>
                 ))}

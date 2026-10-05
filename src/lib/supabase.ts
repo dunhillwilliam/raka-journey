@@ -101,12 +101,12 @@ export async function getSessions(): Promise<SessionReport[]> {
     format: row.format,
     mentorName: row.mentor_name,
     topicsLearned: row.topics_learned || [],
-    curiosity: row.curiosity || { question: '', category: '', level: 'Sedang' },
+    curiosity: row.curiosity || { question: '', category: '', level: '' },
     mentorObservation: row.mentor_observation || { notes: '', strengths: [], areasForDevelopment: [] },
     activities: row.activities || { tasks: [] },
     parentFeedback: row.parent_feedback || { quote: '', parentName: '', date: '' },
     nextSessionPlan: row.next_session_plan || [],
-    scores: row.scores || { creativity: 80, criticalThinking: 75, communication: 75, digitalSkills: 80, independence: 70 }
+    scores: row.scores || { creativity: 0, criticalThinking: 0, communication: 0, digitalSkills: 0, independence: 0 }
   }));
 }
 
@@ -291,26 +291,26 @@ export async function saveArtworkToDb(item: Artwork): Promise<boolean> {
   }
 }
 
-export async function getUserProfile(): Promise<UserProfile | null> {
-  const client = getSupabaseClient();
-  if (!client) return null;
-  const { data, error } = await client
-    .from('user_profile')
-    .select('*')
-    .limit(1)
-    .single();
-
-  if (error) throw error;
-  if (!data) return null;
-
-  return {
-    name: data.name,
-    age: data.age,
-    interests: data.interests || [],
-    avatarUrl: data.avatar_url || '',
-    notifications: data.notifications || { newSession: true, parentFeedback: true, monthlyProgress: true }
-  };
-}
+// export async function getUserProfile(): Promise<UserProfile | null> {
+//   const client = getSupabaseClient();
+//   if (!client) return null;
+//   const { data, error } = await client
+//     .from('user_profile')
+//     .select('*')
+//     .limit(1)
+//     .single();
+//
+//   if (error) throw error;
+//   if (!data) return null;
+//
+//   return {
+//     name: data.name,
+//     age: data.age,
+//     interests: data.interests || [],
+//     avatarUrl: data.avatar_url || '',
+//     notifications: data.notifications || { newSession: true, parentFeedback: true, monthlyProgress: true }
+//   };
+// }
 
 export async function saveUserProfile(profile: UserProfile): Promise<boolean> {
   const client = getSupabaseClient();

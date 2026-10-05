@@ -48,8 +48,8 @@ export const UploadArtworkModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-6 text-xs max-h-[92vh] overflow-y-auto my-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-4 z-50 animate-in fade-in overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-4 text-xs max-h-[92vh] overflow-y-auto my-auto">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
@@ -73,7 +73,7 @@ export const UploadArtworkModal: React.FC = () => {
         </div>
 
         {errorMessage && (
-          <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-medium text-xs">
+          <div className="mt-3 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-medium text-xs">
             {errorMessage}
           </div>
         )}
@@ -110,7 +110,7 @@ export const UploadArtworkModal: React.FC = () => {
           {/* File Picker / Dropzone */}
           <div>
             <label className="block text-slate-700 font-semibold mb-1">Pilih File</label>
-            <label className="border-2 border-dashed border-slate-300 hover:border-indigo-400 rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-indigo-50/20 transition-all text-center min-h-[110px]">
+            <label className="border-2 border-dashed border-slate-300 hover:border-indigo-400 rounded-xl p-4 sm:p-4 flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-indigo-50/20 transition-all text-center min-h-[110px]">
               <Upload className="w-6 h-6 text-slate-400 mb-1.5" />
               {selectedFile ? (
                 <div>

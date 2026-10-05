@@ -1,5 +1,3 @@
-export type UserRole = 'mentor' | 'parent' | 'student';
-
 export interface CompetencyScore {
   creativity: number;
   criticalThinking: number;

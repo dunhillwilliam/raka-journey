@@ -32,7 +32,7 @@ export const MonthlyReportView: React.FC = () => {
           <p className="text-[11px] sm:text-xs text-slate-500">Rangkuman bulanan dan evaluasi capaian belajar Raka</p>
         </div>
 
-        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto my-8">
+        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 sm:p-4 text-center max-w-lg mx-auto my-8">
           <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3">
             <Calendar className="w-6 h-6" />
           </div>
@@ -103,7 +103,7 @@ export const MonthlyReportView: React.FC = () => {
       </div>
 
       {/* Competencies Progress in Monthly View */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-xs">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 mb-4">Evaluasi Kompetensi Belajar</h3>
         <div className="space-y-3">
           {competencies.map(comp => (

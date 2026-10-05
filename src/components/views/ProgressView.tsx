@@ -19,7 +19,7 @@ export const ProgressView: React.FC = () => {
           <p className="text-[11px] sm:text-xs text-slate-500">Perkembangan kemampuan dan kompetensi dari waktu ke waktu</p>
         </div>
 
-        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto my-8">
+        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 sm:p-4 text-center max-w-lg mx-auto my-8">
           <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3">
             <TrendingUp className="w-6 h-6" />
           </div>
@@ -44,11 +44,11 @@ export const ProgressView: React.FC = () => {
   const progressPoints = sortedSessions.map(s => ({
     week: `Sesi ${s.sessionNumber}`,
     date: s.formattedDate,
-    creativity: s.scores.creativity || 80,
-    criticalThinking: s.scores.criticalThinking || 75,
-    communication: s.scores.communication || 75,
-    digitalSkills: s.scores.digitalSkills || 80,
-    independence: s.scores.independence || 70
+    creativity: s.scores.creativity || 0,
+    criticalThinking: s.scores.criticalThinking || 0,
+    communication: s.scores.communication || 0,
+    digitalSkills: s.scores.digitalSkills || 0,
+    independence: s.scores.independence || 0
   }));
 
   // SVG Chart Dimensions
@@ -101,7 +101,7 @@ export const ProgressView: React.FC = () => {
       </div>
 
       {/* Main Chart Container */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 sm:p-6 shadow-xs relative">
+      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-4 shadow-xs relative">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
           <div>
             <h3 className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight">
@@ -241,7 +241,7 @@ export const ProgressView: React.FC = () => {
 
         {/* Active Point Scorecard */}
         {activePoint && (
-          <div className="mt-4 p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="mt-4 p-4 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs">
             <div>
               <span className="font-bold text-slate-800">{activePoint.week}</span>
               <span className="text-slate-400 ml-2">({activePoint.date})</span>
@@ -261,7 +261,7 @@ export const ProgressView: React.FC = () => {
 
       {/* Breakdown Table & Overall Progress Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+        <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-4 shadow-xs">
           <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-3">Ringkasan Perkembangan Kompetensi</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
@@ -292,7 +292,7 @@ export const ProgressView: React.FC = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-4 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-1">Rata-rata Kemajuan</h3>
             <p className="text-[11px] text-slate-500 mb-4">Akumulasi pertumbuhan kompetensi dari sesi mentoring</p>

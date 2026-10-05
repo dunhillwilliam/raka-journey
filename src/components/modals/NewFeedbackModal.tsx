@@ -40,8 +40,8 @@ export const NewFeedbackModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-6 text-xs max-h-[92vh] overflow-y-auto my-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-4 z-50 animate-in fade-in overflow-y-auto">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 p-4 sm:p-4 text-xs max-h-[92vh] overflow-y-auto my-auto">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
@@ -92,7 +92,7 @@ export const NewFeedbackModal: React.FC = () => {
                 <div
                   key={item.id}
                   onClick={() => handleToggleCheck(item.id)}
-                  className="flex items-center gap-2.5 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer min-h-[44px]"
+                  className="flex items-center gap-2.5 p-4 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer min-h-[44px]"
                 >
                   <input
                     type="checkbox"

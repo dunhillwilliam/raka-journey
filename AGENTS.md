@@ -19,17 +19,27 @@ Guidance for AI agents and contributors working on the Raka Learning Journey cod
 
 4. **No hardcoded demo/default records.** `src/lib/initialData.ts` must only contain static metadata (e.g. `INITIAL_COMPETENCIES`). Collection records come strictly from Supabase. Monthly report views should derive options from real data, not hardcoded month lists.
 
-5. **No router.** Navigation is state-driven via `activeTab` in `AppContext` and guarded by `ROLE_TAB_ACCESS` (role → allowed tabs). When adding tabs, update `NavTab`, `ROLE_TAB_ACCESS` in `src/context/AppContext.tsx`, the sidebar `NAV_ITEMS`, and `App.tsx` rendering.
+5. **No router.** Navigation is state-driven via `activeTab` in `AppContext`. The main app is mentor-only. Two separate standalone pages are served via URL params:
+   - `?view=parent` → ParentPage (read-only reports, feedback, progress, curiosity, gallery)
+   - `?view=raka` → RakaPage (add curiosity questions + upload artwork)
 
 ## Architecture
 
-- Single source of truth: `src/context/AppContext.tsx` (role, data, modals, cloud config, RBAC tab map). Views/modals consume only via `useApp()`; they never hold their own data.
+- **Three entry points in `App.tsx`** routed by `?view=` URL param:
+  - No param → mentor-only main app with `AppProvider` + `MainLayout`
+  - `?view=parent` → standalone `ParentPage` (reads Supabase directly, no role-gating)
+  - `?view=raka` → standalone `RakaPage` (reads/writes Supabase directly, no role-gating)
+- Single source of truth (mentor app): `src/context/AppContext.tsx` (data, modals, cloud config). Views/modals consume only via `useApp()`; they never hold their own data.
 - Data layer: `src/lib/supabase.ts` (`get*`/`save*` functions). File uploads: `src/lib/cloudflareR2.ts` (`uploadFileToR2`).
+- Standalone pages import data functions directly from `src/lib/supabase.ts`.
 
 ## Access Model
 
-- `mentor` = full access; `parent` & `student` = restricted (see `ROLE_TAB_ACCESS`). Role switching is client-side UI gating — there is no auth backend.
+- The main app is **mentor-only** — no role switching, no RBAC.
+- Parent and Raka pages are completely separate standalone pages with their own UI and data access.
 
 ## Modify Before You Build
 
 When editing forms, data access, or navigation, preserve cloud-only behavior and empty-form defaults described above, then verify with `bun run lint` and `bun run build`.
+
+When adding features to the parent or raka pages, modify the corresponding page in `src/pages/` — not the main mentor app.

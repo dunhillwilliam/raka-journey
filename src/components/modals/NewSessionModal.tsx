@@ -10,7 +10,7 @@ export const NewSessionModal: React.FC = () => {
 
   const [sessionTitle, setSessionTitle] = useState('');
   const [sessionDate, setSessionDate] = useState(todayStr);
-  const [duration, setDuration] = useState(60);
+  const [duration, setDuration] = useState<number>(0);
   const [format, setFormat] = useState<'Online' | 'Offline' | 'Hybrid'>('Online');
   const [mentorName, setMentorName] = useState('');
 
@@ -99,7 +99,7 @@ export const NewSessionModal: React.FC = () => {
       date: sessionDate,
       formattedDate,
       title: sessionTitle,
-      durationMinutes: Number(duration) || 60,
+      durationMinutes: Number(duration),
       format,
       mentorName,
       topicsLearned: topics.map((t, idx) => ({ id: `t-${idx}`, text: t, completed: true })),
@@ -118,7 +118,7 @@ export const NewSessionModal: React.FC = () => {
       },
       parentFeedback: {
         quote: parentQuote,
-        parentName: 'Orang Tua Raka',
+        parentName: '',
         date: formattedDate
       },
       nextSessionPlan: plans
@@ -129,10 +129,10 @@ export const NewSessionModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 animate-in fade-in overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-4 z-50 animate-in fade-in overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-3xl w-full my-auto shadow-2xl border border-slate-100 flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between shrink-0">
+        <div className="p-4 sm:p-4 border-b border-slate-100 flex items-center justify-between shrink-0">
           <div className="min-w-0 pr-2">
             <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">Mulai Sesi Baru &middot; Daily Report</h3>
             <p className="text-[10px] sm:text-xs text-slate-500 truncate">
@@ -149,9 +149,9 @@ export const NewSessionModal: React.FC = () => {
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6 flex-1 text-xs">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-4 overflow-y-auto space-y-4 sm:space-y-6 flex-1 text-xs">
           {formError && (
-            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-medium text-xs">
+            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 font-medium text-xs">
               {formError}
             </div>
           )}

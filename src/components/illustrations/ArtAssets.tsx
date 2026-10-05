@@ -92,7 +92,7 @@ export function MentorAvatar({ className = 'w-10 h-10' }: { className?: string }
 // Session 04 Video Editing Activity Illustration (Mockup 02 Section 4)
 export function VideoEditingIllustration({ className = 'w-full h-48' }: { className?: string }) {
   return (
-    <div className={`relative rounded-xl overflow-hidden bg-slate-900 border border-slate-700 flex flex-col justify-between p-3 select-none ${className}`}>
+    <div className={`relative rounded-xl overflow-hidden bg-slate-900 border border-slate-700 flex flex-col justify-between p-4 select-none ${className}`}>
       {/* Top bar of video player / editing suite */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-2">
         <div className="flex items-center gap-1.5">
@@ -129,11 +129,11 @@ export function VideoEditingIllustration({ className = 'w-full h-48' }: { classN
       </div>
 
       {/* Editing Timeline Tracks */}
-      <div className="space-y-1.5 bg-slate-950/80 p-2 rounded border border-slate-800">
+      <div className="space-y-1.5 bg-slate-950/80 p-4 rounded border border-slate-800">
         {/* Video track */}
         <div className="flex items-center gap-1 text-[9px] font-mono text-slate-400">
           <span className="w-5 text-indigo-400">V1</span>
-          <div className="flex-1 h-3 rounded bg-slate-800 flex gap-1 overflow-hidden p-0.5">
+          <div className="flex-1 h-3 rounded bg-slate-800 flex gap-1 overflow-hidden p-4">
             <div className="w-1/3 bg-indigo-500/80 rounded text-[7px] text-white flex items-center px-1">Intro</div>
             <div className="w-2/5 bg-sky-500/80 rounded text-[7px] text-white flex items-center px-1">Park B-Roll</div>
             <div className="flex-1 bg-violet-500/80 rounded text-[7px] text-white flex items-center px-1">Outro</div>
@@ -178,8 +178,8 @@ export function ArtworkThumbnail({ artworkId, category, className = 'w-full h-36
 
   if (artworkId === 'art-02' || category === 'Desain') {
     return (
-      <div className={`relative bg-gradient-to-br from-emerald-800 via-teal-900 to-green-950 rounded-lg overflow-hidden flex items-center justify-center p-3 text-center ${className}`}>
-        <div className="border border-emerald-400/40 rounded p-2.5 w-full h-full flex flex-col items-center justify-center bg-emerald-950/40">
+      <div className={`relative bg-gradient-to-br from-emerald-800 via-teal-900 to-green-950 rounded-lg overflow-hidden flex items-center justify-center p-4 text-center ${className}`}>
+        <div className="border border-emerald-400/40 rounded p-4 w-full h-full flex flex-col items-center justify-center bg-emerald-950/40">
           <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-400 to-cyan-300 flex items-center justify-center shadow-md mb-1.5">
             <svg className="w-6 h-6 text-emerald-950" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10" />
@@ -196,7 +196,7 @@ export function ArtworkThumbnail({ artworkId, category, className = 'w-full h-36
 
   if (artworkId === 'art-03' || category === 'Presentasi') {
     return (
-      <div className={`relative bg-gradient-to-br from-amber-700 via-orange-800 to-rose-900 rounded-lg overflow-hidden flex flex-col justify-between p-3 ${className}`}>
+      <div className={`relative bg-gradient-to-br from-amber-700 via-orange-800 to-rose-900 rounded-lg overflow-hidden flex flex-col justify-between p-4 ${className}`}>
         <div className="flex items-center justify-between border-b border-white/20 pb-1">
           <span className="text-[9px] font-mono text-amber-200">SLIDE 01/06</span>
           <div className="w-2 h-2 rounded-full bg-amber-400" />
@@ -216,7 +216,7 @@ export function ArtworkThumbnail({ artworkId, category, className = 'w-full h-36
 
   if (artworkId === 'art-04' || category === 'Proyek') {
     return (
-      <div className={`relative bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-950 rounded-lg overflow-hidden flex items-center justify-center p-3 text-center ${className}`}>
+      <div className={`relative bg-gradient-to-br from-violet-900 via-purple-900 to-indigo-950 rounded-lg overflow-hidden flex items-center justify-center p-4 text-center ${className}`}>
         <div className="relative">
           <div className="w-10 h-10 mx-auto rounded-lg bg-violet-600/40 border border-violet-400/40 flex items-center justify-center mb-1.5 shadow">
             <svg className="w-5 h-5 text-violet-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -233,7 +233,7 @@ export function ArtworkThumbnail({ artworkId, category, className = 'w-full h-36
 
   // Riset / Default
   return (
-    <div className={`relative bg-gradient-to-br from-blue-900 via-sky-900 to-cyan-950 rounded-lg overflow-hidden flex items-center justify-center p-3 text-center ${className}`}>
+    <div className={`relative bg-gradient-to-br from-blue-900 via-sky-900 to-cyan-950 rounded-lg overflow-hidden flex items-center justify-center p-4 text-center ${className}`}>
       <div className="relative">
         <div className="w-10 h-10 mx-auto rounded-full bg-cyan-500/30 border border-cyan-400/40 flex items-center justify-center mb-1.5 shadow">
           <svg className="w-5 h-5 text-cyan-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">

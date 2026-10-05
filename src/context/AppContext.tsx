@@ -7,7 +7,6 @@ import {
   Artwork,
   UserProfile,
   CompetencyProgressItem,
-  UserRole,
   CloudConfig
 } from '../types';
 import { INITIAL_COMPETENCIES } from '../lib/initialData';
@@ -20,7 +19,6 @@ import {
   saveParentFeedbackToDb,
   getArtworksList,
   saveArtworkToDb,
-  getUserProfile,
   saveUserProfile,
   getStoredSupabaseConfig,
   setCustomSupabaseCredentials,
@@ -32,7 +30,7 @@ import {
   uploadFileToR2
 } from '../lib/cloudflareR2';
 
-export type NavTab = 
+export type NavTab =
   | 'beranda'
   | 'daily-report'
   | 'progress'
@@ -42,69 +40,36 @@ export type NavTab =
   | 'galeri-karya'
   | 'pengaturan';
 
-export const ROLE_TAB_ACCESS: Record<UserRole, NavTab[]> = {
-  mentor: [
-    'beranda',
-    'daily-report',
-    'progress',
-    'curiosity',
-    'parent-corner',
-    'monthly-report',
-    'galeri-karya',
-    'pengaturan'
-  ],
-  parent: [
-    'beranda',
-    'daily-report',
-    'progress',
-    'curiosity',
-    'parent-corner',
-    'galeri-karya'
-  ],
-  student: [
-    'beranda',
-    'progress',
-    'curiosity',
-    'galeri-karya'
-  ]
-};
-
 interface AppContextType {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
-  userRole: UserRole;
-  setUserRole: (role: UserRole) => void;
-  hasTabAccess: (tab: NavTab) => boolean;
-  
-  // Data
+
   sessions: SessionReport[];
   currentSession: SessionReport | null;
   selectSession: (sessionId: string) => void;
   addSession: (session: Omit<SessionReport, 'id' | 'scores'>) => Promise<void>;
   updateSession: (session: SessionReport) => Promise<void>;
-  
+
   competencies: CompetencyProgressItem[];
   curiosityItems: CuriosityItem[];
   addCuriosityItem: (item: Omit<CuriosityItem, 'id' | 'date' | 'formattedDate'>) => Promise<void>;
-  
+
   parentFeedbacks: ParentFeedbackItem[];
   addParentFeedback: (feedback: Omit<ParentFeedbackItem, 'id' | 'date'>) => Promise<void>;
   toggleFeedbackChecklist: (feedbackId: string, checkId: string) => void;
-  
+
   monthlyReport: MonthlyReportData;
   toggleMonthlyTarget: (targetId: string) => void;
-  
+
   artworks: Artwork[];
   uploadArtwork: (file: File, title: string, category: Artwork['category'], description?: string) => Promise<{ success: boolean; error?: string }>;
-  
+
   userProfile: UserProfile;
   updateUserProfile: (profile: Partial<UserProfile>) => void;
-  
-  // Cloud & Database Settings
+
   cloudConfig: CloudConfig;
   updateCloudConfig: (supabaseUrl: string, supabaseAnonKey: string, r2AccountId: string, r2Bucket: string, r2PublicUrl: string) => Promise<boolean>;
-  
-  // Modals & UI State
+
   isNewSessionModalOpen: boolean;
   setIsNewSessionModalOpen: (open: boolean) => void;
   isNewCuriosityModalOpen: boolean;
@@ -118,7 +83,7 @@ interface AppContextType {
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: (open: boolean) => void;
 
-  resetToDefaultDemoData: () => void;
+  refreshData: () => void;
   isLoading: boolean;
 }
 
@@ -126,46 +91,30 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<NavTab>('beranda');
-  const [userRole, setUserRoleState] = useState<UserRole>('mentor');
-
-  const setUserRole = (role: UserRole) => {
-    setUserRoleState(role);
-    setActiveTab(currentTab => {
-      if (ROLE_TAB_ACCESS[role].includes(currentTab)) {
-        return currentTab;
-      }
-      return ROLE_TAB_ACCESS[role][0];
-    });
-  };
-
-  const hasTabAccess = (tab: NavTab) => ROLE_TAB_ACCESS[userRole].includes(tab);
-
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Core Data
   const [sessions, setSessions] = useState<SessionReport[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string>('');
   const [curiosityItems, setCuriosityItems] = useState<CuriosityItem[]>([]);
   const [parentFeedbacks, setParentFeedbacks] = useState<ParentFeedbackItem[]>([]);
-const [monthlyReport, setMonthlyReport] = useState<MonthlyReportData>({
-  id: '',
-  month: '',
-  year: new Date().getFullYear(),
-  growthStory: '',
-  highlights: { biggestGrowth: '', mostCuriousAbout: '', mentorNoticed: '', parentNoticed: '' },
-  recap: { totalSessions: 0, attendanceRate: 100, totalProjects: 0, totalQuestions: 0 },
-  targetsNextMonth: []
-});
-const [artworks, setArtworks] = useState<Artwork[]>([]);
-const [userProfile, setUserProfile] = useState<UserProfile>({
-  name: '',
-  age: 0,
-  interests: [],
-  avatarUrl: '',
-  notifications: { newSession: true, parentFeedback: true, monthlyProgress: true }
-});
+  const [monthlyReport, setMonthlyReport] = useState<MonthlyReportData>({
+    id: '',
+    month: '',
+    year: new Date().getFullYear(),
+    growthStory: '',
+    highlights: { biggestGrowth: '', mostCuriousAbout: '', mentorNoticed: '', parentNoticed: '' },
+    recap: { totalSessions: 0, attendanceRate: 100, totalProjects: 0, totalQuestions: 0 },
+    targetsNextMonth: []
+  });
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    name: '',
+    age: 0,
+    interests: [],
+    avatarUrl: '',
+    notifications: { newSession: true, parentFeedback: true, monthlyProgress: true }
+  });
 
-  // Cloud Config
   const [cloudConfig, setCloudConfig] = useState<CloudConfig>({
     supabaseUrl: '',
     supabaseAnonKey: '',
@@ -176,7 +125,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
     isR2Configured: false
   });
 
-  // Modals
   const [isNewSessionModalOpen, setIsNewSessionModalOpen] = useState(false);
   const [isNewCuriosityModalOpen, setIsNewCuriosityModalOpen] = useState(false);
   const [isNewFeedbackModalOpen, setIsNewFeedbackModalOpen] = useState(false);
@@ -184,7 +132,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
   const [isPdfPreviewOpen, setIsPdfPreviewOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Lock background screen scroll when mobile sidebar drawer is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       const originalBodyOverflow = document.body.style.overflow;
@@ -203,7 +150,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
     }
   }, [isMobileMenuOpen]);
 
-  // Load initial persistent data on mount
   useEffect(() => {
     async function loadData() {
       setIsLoading(true);
@@ -213,13 +159,11 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
           loadedCuriosity,
           loadedFeedbacks,
           loadedArtworks,
-          loadedProfile
         ] = await Promise.all([
           getSessions(),
           getCuriosityList(),
           getParentFeedbacks(),
           getArtworksList(),
-          getUserProfile()
         ]);
 
         setSessions(loadedSessions);
@@ -229,11 +173,7 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
         setCuriosityItems(loadedCuriosity);
         setParentFeedbacks(loadedFeedbacks);
         setArtworks(loadedArtworks);
-        if (loadedProfile) {
-          setUserProfile(loadedProfile);
-        }
 
-        // Check stored Cloud credentials
         const sbConfig = getStoredSupabaseConfig();
         const r2Config = getStoredR2Config();
 
@@ -263,10 +203,8 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
     loadData();
   }, []);
 
-  // Compute current active session (null if no sessions exist)
   const currentSession = sessions.find(s => s.id === currentSessionId) || (sessions.length > 0 ? sessions[0] : null);
 
-  // Dynamically calculate competencies based on real sessions
   const competencies: CompetencyProgressItem[] = INITIAL_COMPETENCIES.map(comp => {
     if (sessions.length === 0) {
       return {
@@ -277,7 +215,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
       };
     }
 
-    // Sort chronologically (oldest to newest)
     const sorted = [...sessions].sort((a, b) => a.sessionNumber - b.sessionNumber);
     const firstScore = sorted[0].scores[comp.key] || 0;
     const latestScore = sorted[sorted.length - 1].scores[comp.key] || 0;
@@ -301,11 +238,11 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
       ...sessionData,
       id: newId,
       scores: {
-        creativity: 85,
-        criticalThinking: 80,
-        communication: 80,
-        digitalSkills: 85,
-        independence: 75
+        creativity: 0,
+        criticalThinking: 0,
+        communication: 0,
+        digitalSkills: 0,
+        independence: 0
       }
     };
 
@@ -314,7 +251,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
     setCurrentSessionId(newId);
     await saveSessionToDb(newSession);
 
-    // Also auto-add curiosity question if present
     if (sessionData.curiosity?.question) {
       const newCuriosity: CuriosityItem = {
         id: `curiosity-${Date.now()}`,
@@ -387,13 +323,12 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
   const toggleMonthlyTarget = (targetId: string) => {
     setMonthlyReport(prev => ({
       ...prev,
-      targetsNextMonth: prev.targetsNextMonth.map(t => 
+      targetsNextMonth: prev.targetsNextMonth.map(t =>
         t.id === targetId ? { ...t, completed: !t.completed } : t
       )
     }));
   };
 
-  // Upload artwork using Cloudflare R2 and persist in Supabase
   const uploadArtwork = async (
     file: File,
     title: string,
@@ -423,7 +358,7 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
         storageProvider: 'cloudflare_r2',
         r2Bucket: uploadRes.bucket,
         r2Key: uploadRes.storageKey,
-        description: description || `Karya ${category} Raka yang tersimpan di Cloudflare R2.`
+        description: description || ''
       };
 
       const updated = [newArt, ...artworks];
@@ -444,7 +379,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
     });
   };
 
-  // Update Cloud configuration
   const updateCloudConfig = async (
     supabaseUrl: string,
     supabaseAnonKey: string,
@@ -475,21 +409,18 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
       isR2Configured: Boolean(r2AccountId || r2PublicUrl)
     });
 
-    // Reload data with new credentials
     try {
-      const [loadedSessions, loadedCuriosity, loadedFeedbacks, loadedArtworks, loadedProfile] = await Promise.all([
+      const [loadedSessions, loadedCuriosity, loadedFeedbacks, loadedArtworks] = await Promise.all([
         getSessions(),
         getCuriosityList(),
         getParentFeedbacks(),
         getArtworksList(),
-        getUserProfile()
       ]);
       setSessions(loadedSessions);
       if (loadedSessions.length > 0) setCurrentSessionId(loadedSessions[0].id);
       setCuriosityItems(loadedCuriosity);
       setParentFeedbacks(loadedFeedbacks);
       setArtworks(loadedArtworks);
-      if (loadedProfile) setUserProfile(loadedProfile);
     } catch (e) {
       console.warn('Error reloading data with updated credentials:', e);
     }
@@ -497,7 +428,7 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
     return true;
   };
 
-  const resetToDefaultDemoData = () => {
+  const refreshData = () => {
     window.location.reload();
   };
 
@@ -506,9 +437,6 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
       value={{
         activeTab,
         setActiveTab,
-        userRole,
-        setUserRole,
-        hasTabAccess,
         sessions,
         currentSession,
         selectSession,
@@ -540,7 +468,7 @@ const [userProfile, setUserProfile] = useState<UserProfile>({
         setIsPdfPreviewOpen,
         isMobileMenuOpen,
         setIsMobileMenuOpen,
-        resetToDefaultDemoData,
+        refreshData,
         isLoading
       }}
     >

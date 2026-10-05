@@ -49,7 +49,7 @@ export const CuriosityView: React.FC = () => {
       </div>
 
       {curiosityItems.length === 0 ? (
-        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto my-8">
+        <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-4 sm:p-4 text-center max-w-lg mx-auto my-8">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-3">
             <HelpCircle className="w-6 h-6" />
           </div>
@@ -69,7 +69,7 @@ export const CuriosityView: React.FC = () => {
         <>
           {/* Topik Curiosity Visual Bar Chart */}
           {topicStats.length > 0 && (
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-6 shadow-xs">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-4 shadow-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
                 <div>
                   <h3 className="text-xs sm:text-sm font-bold text-slate-900">Distribusi Topik Minat</h3>

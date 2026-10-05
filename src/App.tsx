@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppProvider, useApp, ROLE_TAB_ACCESS } from './context/AppContext';
+import { AppProvider, useApp } from './context/AppContext';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { DashboardView } from './components/views/DashboardView';
@@ -15,33 +15,31 @@ import { NewCuriosityModal } from './components/modals/NewCuriosityModal';
 import { NewFeedbackModal } from './components/modals/NewFeedbackModal';
 import { UploadArtworkModal } from './components/modals/UploadArtworkModal';
 import { PdfPreviewModal } from './components/modals/PdfPreviewModal';
+import ParentPage from './pages/ParentPage';
+import RakaPage from './pages/RakaPage';
 
 const MainLayout: React.FC = () => {
-  const { activeTab, userRole } = useApp();
-  const accessibleTab = ROLE_TAB_ACCESS[userRole].includes(activeTab) ? activeTab : 'beranda';
+  const { activeTab } = useApp();
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800 antialiased font-sans">
-      {/* Sidebar Navigation (Desktop sidebar + Mobile off-canvas drawer) */}
       <Sidebar />
 
-      {/* Main Content Viewport */}
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
 
-        <main className="flex-1 p-3.5 sm:p-5 md:p-8 pb-12 overflow-y-auto">
-          {accessibleTab === 'beranda' && <DashboardView />}
-          {accessibleTab === 'daily-report' && <DailyReportView />}
-          {accessibleTab === 'progress' && <ProgressView />}
-          {accessibleTab === 'curiosity' && <CuriosityView />}
-          {accessibleTab === 'parent-corner' && <ParentCornerView />}
-          {accessibleTab === 'monthly-report' && <MonthlyReportView />}
-          {accessibleTab === 'galeri-karya' && <GalleryView />}
-          {accessibleTab === 'pengaturan' && <SettingsView />}
+        <main className="flex-1 p-4 sm:p-4 md:p-4 pb-12 overflow-y-auto">
+          {activeTab === 'beranda' && <DashboardView />}
+          {activeTab === 'daily-report' && <DailyReportView />}
+          {activeTab === 'progress' && <ProgressView />}
+          {activeTab === 'curiosity' && <CuriosityView />}
+          {activeTab === 'parent-corner' && <ParentCornerView />}
+          {activeTab === 'monthly-report' && <MonthlyReportView />}
+          {activeTab === 'galeri-karya' && <GalleryView />}
+          {activeTab === 'pengaturan' && <SettingsView />}
         </main>
       </div>
 
-      {/* Modals Container */}
       <NewSessionModal />
       <NewCuriosityModal />
       <NewFeedbackModal />
@@ -51,7 +49,25 @@ const MainLayout: React.FC = () => {
   );
 };
 
+function useViewParam(): 'mentor' | 'parent' | 'raka' {
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get('view');
+  if (view === 'parent') return 'parent';
+  if (view === 'raka') return 'raka';
+  return 'mentor';
+}
+
 export default function App() {
+  const view = useViewParam();
+
+  if (view === 'parent') {
+    return <ParentPage />;
+  }
+
+  if (view === 'raka') {
+    return <RakaPage />;
+  }
+
   return (
     <AppProvider>
       <MainLayout />
